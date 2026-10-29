@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+            color: #222;
+            margin: 0;
+        }
+
+        header {
+            background-color: #169034;
+            padding: 20px;
+        }
+        h1 {
+            color: #ddd;
+        }
+        h2 {
+            color: #169034;
+        }
+        
+        main {
+            padding: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: end;
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        select, button {
+            padding: 9px;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .resumo {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin: 20px 0;
+        }
+
+        .indicador {
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 16px;
+            min-width: 180px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 32px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 9px;
+            text-align: left;
+        }
+
+        th {
+            background: #f2f5f3;
+        }
+
+        .concluinte {
+            color: #169034;
+            font-weight: bold;
+        }
+
+        @media print {
+            form, .nao-imprimir {
+                display: none;
+            }
+
+            body {
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Relatório de participantes e concluintes</h1>
+    </header>
+    
+    <main>
+        <form method="get">
+            <div>
+                <label for="formacao">Formação</label>
+                <select name="formacao" id="formacao">
+                    <option value="">Todas as formações</option>
+                    {% for formacao in formacoes %}
+                        <option value="{{ formacao.id }}" {% if formacao_selecionada == formacao.id|stringformat:"s" %}selected{% endif %}>
+                            {{ formacao.titulo }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label for="turma">Turma</label>
+                <select name="turma" id="turma">
+                    <option value="">Todas as turmas</option>
+                    {% for turma in turmas %}
+                        <option value="{{ turma.id }}" {% if formacao_selecionada == formacao.id|stringformat:"s" %}selected{% endif %}>
+                            {{ turma.nome }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <button type="submit">Filtrar</button>
+                
+                <a href="{% url 'relatorios:participantes' %}">
+                    <button type="button">Limpar filtros</button>
+                </a>
+            </div>
+            <div>
+                <button type="button" class="nao-imprimir" onclick="window.print()">
+                    Imprimir / salvar em PDF
+                </button>
+                
+                <a href="{% url 'relatorios:participantes_excel' %}?formacao={{ formacao_selecionada }}&turma={{ turma_selecionada }}">
+                    <button type="button">Exportar para Excel</button>
+                </a>
+
+                <a href="{% url 'relatorios:participantes_pdf' %}?formacao={{ formacao_selecionada }}&turma={{ turma_selecionada }}">
+                    <button type="button">Exportar para PDF</button>
+                </a>
+            </div>
+        </form>
+
+        <div class="resumo">
+            <div class="indicador">
+                <strong>Participantes ativos</strong>
+                <h2>{{ total_participantes }}</h2>
+            </div>
+            <div class="indicador">
+                <strong>Concluintes</strong>
+                <h2>{{ total_concluintes }}</h2>
+            </div>
+        </div>
+        <h2>Todos os participantes</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>CPF</th>
+                    <th>Formação</th>
+                    <th>Turma</th>
+                    <th>Horas frequentadas</th>
+                    <th>Frequência</th>
+                    <th>Resultado</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in resultados %}
+                    <tr>
+                        <td>{{ item.inscricao.cursista.nome_completo }}</td>
+                        <td>{{ item.inscricao.cursista.cpf }}</td>
+                        <td>{{ item.inscricao.turma.formacao.titulo }}</td>
+                        <td>{{ item.inscricao.turma.nome }}</td>
+                        <td>{{ item.horas_frequentadas }}</td>
+                        <td>{{ item.percentual_frequencia }}%</td>
+                        <td>
+                            {% if item.horas_realizadas == 0 %}
+                                sem encontros
+                            {% elif item.concluinte %}
+                                <span class="concluinte">Concluinte</span>
+                            {% else %}
+                                Não concluinte
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7">
+                            Nenhum participante encontrado para os filtros selecionados.
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h2>Relação de concluintes</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Formação</th>
+                    <th>Turma</th>
+                    <th>Horas frequentadas</th>
+                    <th>Frequência</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in concluintes %}
+                    <td>{{ item.inscricao.cursista.nome_completo }}</td>
+                    <td>{{ item.inscricao.turma.formacao.titulo }}</td>
+                    <td>{{ item.inscricao.turma.nome }}</td>
+                    <td>{{ item.horas_frequentadas }}</td>
+                    <td>{{ item.percentual_frequencia }}%</td>
+                {% empty %}
+                    <tr>
+                        <td colspan="5">
+                            Nenhum concluinte encontrado para os filtros selecionados.
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </main>
+</body>
+</html>

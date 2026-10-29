@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório Consolidado</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+            color: #222;
+            margin: 0;
+        }
+        header {
+            background-color: #169034;
+            padding: 20px;
+        }
+        h1 {
+            color: #ddd;
+            margin-bottom: 8px;
+        }
+        h2 {
+            color: #169034;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        .resumo {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin: 24px 0;
+        }
+
+        .indicador {
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 16px;
+            min-width: 160px;
+        }
+
+        button {
+            padding: 9px;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 9px;
+            text-align: left;
+        }
+
+        th {
+            background: #f2f5f3;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #f2f6f3;
+        }
+
+        .acoes {
+            margin: 20px 0;
+        }
+
+        @media print {
+            .acoes {
+                display: none;
+            }
+            body {
+                margin: 10mm;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Relatório Consolidado de Formações</h1>
+    </header>
+    <main>
+        <p class="subtitulo">
+            Acompanhamento das formações continuadas da Secretaria Municipal de Educação.
+        </p>
+
+        <div class="resumo">
+            <div class="indicador">
+                <strong>Formações cadastradas</strong>
+                <h2>{{ total_formacoes }}</h2>
+            </div>
+
+            <div class="indicador">
+                <strong>Horas ministradas</strong>
+                <h2>{{ total_horas_gerais|floatformat:2 }}</h2>
+            </div>
+
+            <div class="indicador">
+                <strong>Inscricções concluídas</strong>
+                <h2>{{ total_concluintes_geral }}</h2>
+            </div>
+        </div>
+
+        <div class="acoes">
+            <button onclick="window.print()">
+                Imprimir / salvar em PDF
+            </button>
+            <a href="{% url 'relatorios:consolidado_excel' %}">
+                <button>Exportar para Excel</button>
+            </a>
+            <a href="{% url 'relatorios:consolidado_pdf' %}">
+                <button>Exportar para PDF</button>
+            </a>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Formação</th>
+                    <th>Turmas</th>
+                    <th>Encontros realizados</th>
+                    <th>Horas ministradas</th>
+                    <th>Inscrições ativas</th>
+                    <th>Concluintes</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in resultados %}
+                    <tr>
+                        <td>{{ item.formacao.titulo }}</td>
+                        <td>{{ item.total_turmas }}</td>
+                        <td>{{ item.total_encontros }}</td>
+                        <td>{{ item.carga_horaria|floatformat:2 }}</td>
+                        <td>{{ item.total_inscricoes }}</td>
+                        <td>{{ item.total_concluintes }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6">Nenhuma formação cadastrada.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </main>
+    
+</body>
+</html>
