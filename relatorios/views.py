@@ -190,8 +190,8 @@ def export_participantes_excel(request):
         )
     )
 
-    resposta["Contente-Disposition"] = (
-        'attachment; filename="relatorio_participantes.xlsx'
+    resposta["Content-Disposition"] = (
+        'attachment; filename="relatorio_participantes.xlsx"'
     )
 
     workbook.save(resposta)
@@ -215,7 +215,7 @@ def export_participantes_pdf(request):
 
     if formacao_id.isdigit():
         inscricoes = inscricoes.filter(
-            formacao_id=int(formacao_id)
+            turma__formacao_id=int(formacao_id)
         )
 
     if turma_id.isdigit():
@@ -225,7 +225,7 @@ def export_participantes_pdf(request):
 
     resposta = HttpResponse(content_type="application/pdf")
     resposta["Content-Disposition"] = (
-        'attachment; filename="relatorio_participantes.pdf'
+        'attachment; filename="relatorio_participantes.pdf"'
     )
     documento = SimpleDocTemplate(
         resposta,
@@ -327,7 +327,6 @@ def export_participantes_pdf(request):
     total_concluintes = 0
 
     for inscricao in inscricoes:
-        print(inscricao)
         calculo = calcular_frequencia(inscricao)
         cursista = inscricao.cursista
 
@@ -349,7 +348,7 @@ def export_participantes_pdf(request):
             Paragraph(escape(cursista.escola.nome), celula_estilo),
             Paragraph(escape(inscricao.turma.formacao.titulo), celula_estilo),
             Paragraph(escape(inscricao.turma.nome), celula_estilo),
-            str(calculo["horas_realizadas"]),
+            str(calculo["horas_frequentadas"]),
             f'{calculo["percentual_frequencia"]:.2f}%',
             Paragraph(escape(resultado), celula_estilo),
         ])
