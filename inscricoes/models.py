@@ -47,10 +47,11 @@ class Inscricao(models.Model):
     def clean(self):
         super().clean()
 
-        if self.cursista_id and self.turma_id:
+        if self.situacao == self.Situacao.ATIVA and self.cursista_id and self.turma_id:
             inscricao_existente = Inscricao.objects.filter(
                 cursista_id=self.cursista_id,
                 turma__formacao_id=self.turma.formacao_id,
+                situacao=self.Situacao.ATIVA,
             ).exclude(pk=self.pk)
 
             if inscricao_existente.exists():

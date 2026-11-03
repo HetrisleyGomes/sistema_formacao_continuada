@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import Inscricao
-from .services import calcular_frequencia
+from .services import calcular_frequencia, salvar_inscricao
 
 @admin.register(Inscricao)
 class InscricaoAdmin(admin.ModelAdmin):
@@ -47,3 +47,6 @@ class InscricaoAdmin(admin.ModelAdmin):
         if resultado["concluinte"]:
             return "Conluinte"
         return "Não concluinte"
+
+    def save_model(self, request, obj, form, change):
+        salvar_inscricao(obj)

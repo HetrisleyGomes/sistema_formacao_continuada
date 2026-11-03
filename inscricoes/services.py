@@ -1,7 +1,9 @@
 from decimal import Decimal
 from django.db.models import Sum
+from django.db import transaction
 
 from encontros.models import Encontro
+from cursistas.models import Cursista
 from frequencias.models import Frequencia
 from .models import Inscricao
 
@@ -53,3 +55,12 @@ def calcular_frequencia(inscricao: Inscricao) -> dict:
         "percentual_frequencia": percentual,
         "concluinte": concluinte,
     }
+
+def salvar_inscricao(inscricao: Inscricao):
+    with transaction.atomic():
+        Cursista.objects.select_for_update().get(
+            pk=inscricao.cursista_id
+        )
+        inscricao.full_clean()
+        inscricao.save()
+    return inscricao
