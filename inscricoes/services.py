@@ -19,9 +19,8 @@ def calcular_frequencia(inscricao: Inscricao) -> dict:
         total=Sum("carga_horaria")
     )
 
-    horas_realizadas = (
-        resultado_total["total"] or Decimal("0.00")
-    )
+    horas_realizadas = resultado_total["total"] or Decimal("0.00")
+
 
     resultado_presenca = Frequencia.objects.filter(
         inscricao=inscricao,
@@ -31,13 +30,12 @@ def calcular_frequencia(inscricao: Inscricao) -> dict:
         total=Sum("encontro__carga_horaria")
     )
 
-    horas_frequentadas = (
-        resultado_presenca["total"] or Decimal("0.00")
-    )
+    horas_frequentadas = resultado_presenca["total"] or Decimal("0.00")
+    carga_horaria_formacao = inscricao.turma.formacao.carga_horaria
 
-    if horas_realizadas > 0:
+    if carga_horaria_formacao > 0:
         percentual = (
-            horas_frequentadas / horas_realizadas
+            horas_frequentadas / carga_horaria_formacao
         ) * Decimal("100")
 
         percentual = percentual.quantize(Decimal("0.01"))
@@ -45,7 +43,7 @@ def calcular_frequencia(inscricao: Inscricao) -> dict:
         percentual = Decimal("0.00")
 
     concluinte = (
-        horas_realizadas > 0
+        carga_horaria_formacao > 0
         and percentual >= PERCENTUAL_MINIMO_CONCLUSAO
     )
 
