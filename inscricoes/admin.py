@@ -1,9 +1,10 @@
 from django.contrib import admin
+from usuarios.admin_mixins import AcessoGestoresAdmin
 from .models import Inscricao
 from .services import calcular_frequencia, salvar_inscricao
 
 @admin.register(Inscricao)
-class InscricaoAdmin(admin.ModelAdmin):
+class InscricaoAdmin(AcessoGestoresAdmin):
     list_display = (
         "cursista",
         "turma",

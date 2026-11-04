@@ -1,8 +1,9 @@
 from django.contrib import admin
+from usuarios.admin_mixins import AcessoGestoresAdmin
 from .models import Turma
 
 @admin.register(Turma)
-class TurmaAdmin(admin.ModelAdmin):
+class TurmaAdmin(AcessoGestoresAdmin):
     list_display = (
         "nome",
         "formacao",

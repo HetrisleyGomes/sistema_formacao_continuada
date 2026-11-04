@@ -1,8 +1,9 @@
 from django.contrib import admin
+from usuarios.admin_mixins import AcessoGestoresAdmin
 from .models import Encontro
 
 @admin.register(Encontro)
-class EncontroAdmin(admin.ModelAdmin):
+class EncontroAdmin(AcessoGestoresAdmin):
     list_display = (
         "titulo",
         "turma",

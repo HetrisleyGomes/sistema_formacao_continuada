@@ -1,8 +1,9 @@
 from django.contrib import admin
+from usuarios.admin_mixins import AcessoGestoresAdmin
 from .models import Frequencia
 
 @admin.register(Frequencia)
-class FrequenciaAdmin(admin.ModelAdmin):
+class FrequenciaAdmin(AcessoGestoresAdmin):
     list_display = (
         "inscricao",
         "encontro",
