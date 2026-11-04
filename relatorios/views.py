@@ -1,4 +1,3 @@
-from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.db.models import Sum
@@ -10,6 +9,7 @@ from turmas.models import Turma
 from encontros.models import Encontro
 from inscricoes.models import Inscricao
 from inscricoes.services import calcular_frequencia
+from usuarios.decorators import gestor_ou_administrador_required
 
 from datetime import datetime
 from html import escape
@@ -27,7 +27,7 @@ from reportlab.platypus import (
     TableStyle
 )
 
-@staff_member_required
+@gestor_ou_administrador_required
 def relatorio_participantes(request):
     formacao_id = request.GET.get("formacao", "")
     turma_id = request.GET.get("turma", "")
@@ -88,7 +88,7 @@ def relatorio_participantes(request):
         contexto,
     )
 
-@staff_member_required
+@gestor_ou_administrador_required
 def export_participantes_excel(request):
     formacao_id = request.GET.get("formacao", "")
     turma_id = request.GET.get("turma", "")
@@ -197,7 +197,7 @@ def export_participantes_excel(request):
     workbook.save(resposta)
     return resposta
 
-@staff_member_required
+@gestor_ou_administrador_required
 def export_participantes_pdf(request):
     formacao_id = request.GET.get("formacao", "")
     turma_id = request.GET.get("turma", "")
@@ -402,7 +402,7 @@ def export_participantes_pdf(request):
 
     return resposta
 
-@staff_member_required
+@gestor_ou_administrador_required
 def relatorio_consolidado(request):
     formacoes = Formacao.objects.all().order_by("titulo")
     resultados = []
@@ -463,7 +463,7 @@ def relatorio_consolidado(request):
         contexto,
     )
 
-@staff_member_required
+@gestor_ou_administrador_required
 def export_consolidado_excel(request):
     formacoes = Formacao.objects.all().order_by("titulo")
 
@@ -570,7 +570,7 @@ def export_consolidado_excel(request):
     workbook.save(resposta)
     return resposta
 
-@staff_member_required
+@gestor_ou_administrador_required
 def export_consolidado_pdf(request):
     formacoes = Formacao.objects.all().order_by("titulo")
     resposta = HttpResponse(content_type="application/pdf")
