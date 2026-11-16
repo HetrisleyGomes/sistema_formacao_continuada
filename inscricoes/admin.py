@@ -46,7 +46,7 @@ class InscricaoAdmin(AcessoGestoresAdmin):
         if resultado["horas_realizadas"] == 0:
             return "Sem encontros realizados"
         if resultado["concluinte"]:
-            return "Conluinte"
+            return "Concluinte"
         return "Não concluinte"
 
     def save_model(self, request, obj, form, change):

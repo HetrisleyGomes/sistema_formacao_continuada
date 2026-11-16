@@ -40,6 +40,14 @@ class UsuarioAdmin(UserAdmin):
         }),
     )
 
+    def save_model(self, request, obj, form, change):
+        if not obj.is_superuser:
+            obj.is_staff = obj.perfil in (
+                Usuario.Perfil.ADMINISTRADOR,
+                Usuario.Perfil.GESTOR,
+            )
+        return super().save_model(request, obj, form, change)
+
     def has_module_permission(self, request):
         return request.user.is_superuser
 
