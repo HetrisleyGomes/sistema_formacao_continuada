@@ -1,4 +1,7 @@
+from decimal import Decimal
+from django.core.validators import MinValueValidator
 from django.db import models
+from django.db.models import Q
 
 class Formacao(models.Model):
     titulo = models.CharField(
@@ -16,6 +19,9 @@ class Formacao(models.Model):
     carga_horaria = models.DecimalField(
         max_digits=6,
         decimal_places=2,
+        validators=[
+            MinValueValidator(Decimal("0.1"))
+        ],
         verbose_name="Carga horária total (horas)"
     )
     ativa = models.BooleanField(
@@ -30,6 +36,10 @@ class Formacao(models.Model):
         verbose_name = "Formação"
         verbose_name_plural = "Formações"
         ordering = ["titulo"]
+        models.CheckConstraint(
+            condition=Q(carga_horaria__gt=0),
+            name="formacao_carga_horaria_positiva"
+        )
 
     def __str__(self):
         return self.titulo

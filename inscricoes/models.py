@@ -7,7 +7,7 @@ from turmas.models import Turma
 class Inscricao(models.Model):
     class Situacao(models.TextChoices):
         ATIVA = "ATIVA", "Ativa"
-        CANCELADA = "CANCELADA", "Cancelda"
+        CANCELADA = "CANCELADA", "Cancelada"
 
     cursista = models.ForeignKey(
         Cursista,
@@ -33,7 +33,7 @@ class Inscricao(models.Model):
     )
 
     class Meta:
-        verbose_name = "Inscrição",
+        verbose_name = "Inscrição"
         verbose_name_plural = "Inscrições"
         ordering = ["-data_inscricao"]
 
