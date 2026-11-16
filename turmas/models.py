@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 from formacoes.models import Formacao
 
 class Turma(models.Model):
@@ -40,3 +41,9 @@ class Turma(models.Model):
 
     def __str__(self):
         return f"{self.nome} - {self.formacao.titulo}"
+
+    def clean(self):
+        super().clean()
+        if self.data_inicio and self.data_fim:
+            if self.data_fim < self.data_inicio:
+                raise ValidationError({"data_fim": "A data de encerramento não pode ser anterior à data de início."})

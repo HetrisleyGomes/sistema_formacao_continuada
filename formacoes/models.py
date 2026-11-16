@@ -19,9 +19,7 @@ class Formacao(models.Model):
     carga_horaria = models.DecimalField(
         max_digits=6,
         decimal_places=2,
-        validators=[
-            MinValueValidator(Decimal("0.1"))
-        ],
+        validators=[MinValueValidator(Decimal("0.1"))],
         verbose_name="Carga horária total (horas)"
     )
     ativa = models.BooleanField(
