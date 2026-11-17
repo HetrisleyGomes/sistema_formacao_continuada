@@ -53,8 +53,12 @@ class Frequencia(models.Model):
         if self.inscricao_id and self.encontro_id:
             if self.inscricao.turma_id != self.encontro.turma_id:
                 raise ValidationError({
-                    "encontro": ("O encontro selecionado não pertence à turma desta inscrição.")
+                    "encontro": "O encontro selecionado não pertence à turma desta inscrição."
                 })
+        if self.encontro_id and self.encontro.situacao == Encontro.Situacao.CANCELADO:
+            raise ValidationError({
+                "encontro": "Não é possível registrar frequência em um encontro cancelado."
+            })
 
     def __str__(self):
         return (

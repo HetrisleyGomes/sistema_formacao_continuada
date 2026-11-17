@@ -1,5 +1,6 @@
 from django.db import models
 from escolas.models import Escola
+from .validators import validar_cpf
 
 class Cursista(models.Model):
     class Funcao(models.TextChoices):
@@ -14,6 +15,7 @@ class Cursista(models.Model):
     cpf = models.CharField(
         max_length=11,
         unique=True,
+        validators=[validar_cpf],
         verbose_name="CPF"
     )
     contato = models.CharField(
