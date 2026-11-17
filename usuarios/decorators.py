@@ -7,9 +7,13 @@ def gestor_ou_administrador_required(view_func):
         return (
             user.is_authenticated
             and user.is_active
-            and user.perfil in (
+            and user.is_staff
+            and (
+                user.is_superuser or
+                user.perfil in (
                 Usuario.Perfil.ADMINISTRADOR,
                 Usuario.Perfil.GESTOR,
+                )
             )
         )
     return user_passes_test(
