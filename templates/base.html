@@ -1,0 +1,55 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block titulo %}Monitoramento de Formações{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/variavies.css' %}">
+    <link rel="stylesheet" href="{% static 'css/estilo.css' %}">
+</head>
+<body>
+    <aside class="menu-lateral">
+        <div class="marca">
+            <div class="marca-img">
+                <img class="imagem-logo" src="{% static 'images/brasao-monte-alegre.png' %}" alt="">
+            </div>
+            <div>
+                <strong>Monitoramento</strong>
+                <span>Formações continuadas</span>
+            </div>
+        </div>
+
+        <nav>
+            <span class="menu-titulo">Menu Principal</span>
+            <a href="{% url 'painel:inicio' %}" class="menu-link">Painel inicial</a>
+
+            <span class="menu-titulo">Gerenciamento</span>
+            <a href="/admin/" class="menu-link">Cadastros</a>
+            <a href="{% url 'relatorios:participantes' %}" class="menu-link">Participantes</a>
+            <a href="{% url 'relatorios:consolidado' %}" class="menu-link">Relatório consolidado</a>
+        </nav>
+
+        <div class="menu-rodape">
+            Secretaria Municipal de Educação
+        </div>
+    </aside>
+
+    <div class="conteudo-principal">
+        <header class="cabecalho">
+            <div>
+                <strong>Sistema de Monitoramento</strong>
+                <span>Gestão das Formações Continuadas</span>
+            </div>
+
+            <div class="usuario-logado">
+                {{ request.user.get_full_name | default:request.user.username }}
+            </div>
+        </header>
+        <main class="pagina-main">
+            {% block conteudo %}{% endblock %}
+        </main>
+    </div>
+    
+</body>
+</html>
